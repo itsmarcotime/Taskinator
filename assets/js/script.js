@@ -2,13 +2,27 @@ var formEl = document.querySelector("#task-form");
 
 var tasksToDoEl = document.querySelector("#tasks-to-do");
 
-var createTaskHandler = function (event) {
+
+var taskFormHandler = function (event) {
 
     event.preventDefault();
 
     var taskNameInput = document.querySelector("input[name='task-name']").value;
 
     var taskTypeInput = document.querySelector("select[name='task-type']").value;
+
+    //packages up data as object
+    var taskDataObj = {
+        name: taskNameInput,
+        type: taskTypeInput
+    };
+
+    //sends as an arguement to createTaskEl
+    createTaskEl(taskDataObj);
+
+};
+
+var createTaskEl = function(taskDataObj) {
 
     //creates list item
     var listItemEl = document.createElement("li");
@@ -19,12 +33,13 @@ var createTaskHandler = function (event) {
     taskInfoEl.className = "task-info";
 
     //adds html content to div and appends to list item element(<li>)
-    taskInfoEl.innerHTML ="<h3 class='task-name'>" + taskNameInput + "</h3><span class='task-type'>" + taskTypeInput + "</span>";
+    taskInfoEl.innerHTML ="<h3 class='task-name'>" + taskDataObj.name + "</h3><span class='task-type'>" + taskDataObj.type + "</span>";
     listItemEl.appendChild(taskInfoEl);
 
     //adds entire list item to the list appends to ul (<ul>)
     tasksToDoEl.appendChild(listItemEl);
+
 };
 
 
-formEl.addEventListener("submit", createTaskHandler);
+formEl.addEventListener("submit", taskFormHandler);
