@@ -165,7 +165,7 @@ var editTask = function (taskId) {
 
 };
 
-var completedEditTask = function(taskName, taskType, taskId) {
+var completedEditTask = function (taskName, taskType, taskId) {
 
     //find the matching task list 
     var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
@@ -246,10 +246,10 @@ var taskButtonHandler = function (event) {
     };
 };
 
-var taskStatusChangeHandler = function(event) {
-    
+var taskStatusChangeHandler = function (event) {
+
     //get the task items id
-    var taskId =event.target.getAttribute("data-task-id");
+    var taskId = event.target.getAttribute("data-task-id");
 
     //get the currently selected value and convert it to lowercase
     var statusValue = event.target.value.toLowerCase();
@@ -260,7 +260,7 @@ var taskStatusChangeHandler = function(event) {
     if (statusValue === "to do") {
 
         tasksToDoEl.appendChild(taskSelected);
-    
+
     } else if (statusValue === "in progress") {
 
         tasksInProgressEl.appendChild(taskSelected);
@@ -286,12 +286,37 @@ var taskStatusChangeHandler = function(event) {
 
 };
 
-var saveTasks = function() {
+var saveTasks = function () {
 
     localStorage.setItem("tasks", JSON.stringify(tasks));
+
+};
+
+function loadTasks() {
+
+    //Gets task items from localStorage.
+    var savedTasks = localStorage.getItem("tasks");
+
+    //check if tasks arent null
+    if(savedTasks === null) {
+        return false;
+    }
+
+    //Converts tasks from the string format back into an array of objects.
+    savedTasks = JSON.parse(savedTasks);
+
+    //Iterates through a tasks array and creates task elements on the page from it.
+    for (var i = 0; i < savedTasks.length; i++) {
+
+        //pass each task object into createTaskEl() because the display of elements is already written there
+        createTaskEl(savedTasks[i]);
+    }
 
 };
 
 pageContentEl.addEventListener("click", taskButtonHandler);
 
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
+
+loadTasks();
+
