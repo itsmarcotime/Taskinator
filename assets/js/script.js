@@ -25,18 +25,33 @@ var taskFormHandler = function (event) {
 
     formEl.reset();
 
-    //packages up data as object
-    var taskDataObj = {
-        name: taskNameInput,
-        type: taskTypeInput
+    var isEdit = formEl.hasAttribute("data-task-id");
+
+    //has data attribute, so get taskId and call function to finish editing
+    if (isEdit) {
+
+        var taskId = formEl.getAttribute("data-task-id");
+
+        completedEditTask(taskNameInput, taskTypeInput, taskId);
+
+    } else {
+        //no data attribute so create object as normal & pass to createTaskEl
+
+        //packages up data as object
+        var taskDataObj = {
+            name: taskNameInput,
+            type: taskTypeInput
+        };
+
     };
 
-    //sends as an arguement to createTaskEl
     createTaskEl(taskDataObj);
 
 };
 
-var createTaskEl = function(taskDataObj) {
+
+
+var createTaskEl = function (taskDataObj) {
 
     //creates list item
     var listItemEl = document.createElement("li");
@@ -50,7 +65,7 @@ var createTaskEl = function(taskDataObj) {
     taskInfoEl.className = "task-info";
 
     //adds html content to div and appends to list item element(<li>)
-    taskInfoEl.innerHTML ="<h3 class='task-name'>" + taskDataObj.name + "</h3><span class='task-type'>" + taskDataObj.type + "</span>";
+    taskInfoEl.innerHTML = "<h3 class='task-name'>" + taskDataObj.name + "</h3><span class='task-type'>" + taskDataObj.type + "</span>";
     listItemEl.appendChild(taskInfoEl);
 
     var taskActionsEl = createTaskActions(taskIdCounter);
@@ -64,7 +79,7 @@ var createTaskEl = function(taskDataObj) {
 
 };
 
-var createTaskActions = function(taskId) {
+var createTaskActions = function (taskId) {
 
     //container for all other elements
     var actionContainerEl = document.createElement("div");
@@ -97,7 +112,7 @@ var createTaskActions = function(taskId) {
     var statusChoices = ["To do", "In Progress", "Completed"];
 
     for (var i = 0; i < statusChoices.length; i++) {
-        
+
         //create option element
         var statusOptionEl = document.createElement("option");
         statusOptionEl.textContent = statusChoices[i];
@@ -113,7 +128,7 @@ var createTaskActions = function(taskId) {
 
 formEl.addEventListener("submit", taskFormHandler);
 
-var editTask = function(taskId) {
+var editTask = function (taskId) {
 
     //get task list item element
     var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
@@ -131,18 +146,36 @@ var editTask = function(taskId) {
     document.querySelector("#save-task").textContent = "Save Task";
 
     formEl.setAttribute("data-task-id", taskId);
-    
+
 
 };
 
-var deleteTask = function(taskId) {
+var completedEditTask = function(taskName, taskType, taskId) {
+
+    //find the matching task list 
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+
+    //set new values
+    taskSelected.querySelector("h3.task-name").textContent = taskName;
+
+    taskSelected.querySelector("span.task-type").textContent = taskType;
+
+    alert("Task Updated!");
+
+    //resets the form by removing attribute and changing button back to normal
+    formEl.removeAttribute("data-task-id");
+    document.querySelector("#save-task").textContent = "Add Task";
+
+};
+
+var deleteTask = function (taskId) {
 
     var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
     taskSelected.remove();
 
 };
 
-var taskButtonHandler = function(event) {
+var taskButtonHandler = function (event) {
 
     //get target element from event
     var targetEl = event.target;
@@ -157,7 +190,7 @@ var taskButtonHandler = function(event) {
 
     //delete button clicked
     if (event.target.matches(".delete-btn")) {
-        
+
         //get the elements task ID
         var taskId = event.target.getAttribute("data-task-id");
         deleteTask(taskId);
